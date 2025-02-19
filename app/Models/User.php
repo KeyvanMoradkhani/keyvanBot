@@ -19,8 +19,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
+        'telegram_id',
+        'balance',
         'email',
-        'password',
+        'phone',
     ];
 
     /**
@@ -29,8 +32,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password'
     ];
 
     /**
@@ -41,8 +43,17 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function fromTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'from_user_id');
+    }
+
+    public function toTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'to_user_id');
     }
 }
