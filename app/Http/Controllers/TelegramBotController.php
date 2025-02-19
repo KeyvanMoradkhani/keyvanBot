@@ -324,11 +324,10 @@ class TelegramBotController extends Controller
                 return;
             }
 
-            // بررسی اینکه کاربر فعلی گیرنده معامله است
-            if ($chatId != $buyer->telegram_id) {
+            if ($chatId != $buyer->telegram_id && $chatId != $seller->telegram_id) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
-                    'text' => "⛔ شما مجاز به تأیید این معامله نیستید!"
+                    'text' => "⛔ شما مجاز به رد کردن یا تأیید این معامله نیستید!"
                 ]);
                 return;
             }
@@ -400,8 +399,10 @@ class TelegramBotController extends Controller
                 return;
             }
 
+            info($chatId);
+            info($seller->telegram_id);
             // بررسی اینکه کاربر فعلی گیرنده معامله است
-            if ($chatId != $buyer->telegram_id) {
+            if ($chatId != $seller->telegram_id) {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
                     'text' => "⛔ شما مجاز به رد کردن این معامله نیستید!"
@@ -414,13 +415,13 @@ class TelegramBotController extends Controller
 
             // ارسال پیام به دو طرف
             $this->telegram->sendMessage([
-                'chat_id' => $buyer->telegram_id,
-                'text' => "❌ شما معامله با @$seller->telegram_id را رد کردید!"
+                'chat_id' => $seller->telegram_id,
+                'text' => "❌ شما معامله با @$buyer->telegram_id را رد کردید!"
             ]);
 
             $this->telegram->sendMessage([
-                'chat_id' => $seller->telegram_id,
-                'text' => "❌ @$buyer->telegram_id معامله را رد کرد."
+                'chat_id' => $buyer->telegram_id,
+                'text' => "❌ @$seller->telegram_id معامله را رد کرد."
             ]);
         }
 
